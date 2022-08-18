@@ -82,7 +82,15 @@ if args["image"] == "webcam":
 		classMap = cv2.resize(classMap, (image.shape[1], image.shape[0]),
 		interpolation=cv2.INTER_NEAREST)
 		output = ((0.4 * image) + (0.6 * mask)).astype("uint8")
-		
+
+		cv2.imshow("Legend", legend)
+		cv2.imshow("Input", image)
+		cv2.imshow("Output", output)
+		if cv2.waitKey(1) == ord('q'):
+			break
+	cap.release()
+	cv2.destroyAllWindows()
+
 else:
 	# load the input image, resize it, and construct a blob from it,
 	# but keeping mind mind that the original input image dimensions
@@ -128,8 +136,10 @@ else:
 	# form an output visualization
 	output = ((0.4 * image) + (0.6 * mask)).astype("uint8")
 
-# show the input and output images
-cv2.imshow("Legend", legend)
-cv2.imshow("Input", image)
-cv2.imshow("Output", output)
-cv2.waitKey(0)
+	# show the input and output images
+	cv2.imshow("Legend", legend)
+	cv2.imshow("Input", image)
+	cv2.imshow("Output", output)
+	cv2.waitKey(0)
+
+print('Done')
