@@ -1,5 +1,5 @@
 # USAGE
-# python segment.py --model enet-cityscapes/enet-model.net --classes enet-cityscapes/enet-classes.txt --colors enet-cityscapes/enet-colors.txt --image images/example_01.png
+# python segment.py --model /models/enet-cityscapes/enet-model.net --classes /models/enet-cityscapes/enet-classes.txt --colors /models/enet-cityscapes/enet-colors.txt --image images/example_01.png (or write camera if real time segmentation is needed)
 
 # import the necessary packages
 import numpy as np
@@ -59,7 +59,7 @@ print("[INFO] loading model...")
 net = cv2.dnn.readNetFromTorch(args["model"])
 
 
-if args["image"] == "webcam":
+if args["image"] == "camera":
 	cap = cv2.VideoCapture(0)
 	while True:
 		_, image = cap.read()
