@@ -1,14 +1,14 @@
 # USAGE
 # python segment.py --model /models/enet-cityscapes/enet-model.net --classes /models/enet-cityscapes/enet-classes.txt --colors /models/enet-cityscapes/enet-colors.txt --image images/example_01.png (or write camera if real time segmentation is needed)
 
-# import the necessary packages
+
 import numpy as np
 import argparse
 import imutils
 import time
 import cv2
 
-# construct the argument parse and parse the arguments
+
 ap = argparse.ArgumentParser()
 ap.add_argument("-m", "--model", required=True,
 	help="/User/ishachaturvedi/Isha/ARGO_Labs/opencv-semantic-segmentation/enet-cityscapes/enet-model.net")
@@ -22,7 +22,7 @@ ap.add_argument("-w", "--width", type=int, default=500,
 	help="desired width (in pixels) of input image")
 args = vars(ap.parse_args())
 
-# load the class label names
+
 CLASSES = open(args["classes"]).read().strip().split("\n")
 
 # if a colors file was supplied, load it from disk
@@ -31,8 +31,8 @@ if args["colors"]:
 	COLORS = [np.array(c.split(",")).astype("int") for c in COLORS]
 	COLORS = np.array(COLORS, dtype="uint8")
 
-# otherwise, we need to randomly generate RGB colors for each class
-# label
+# otherwise, we need to randomly generate RGB colors for each class label
+
 else:
 	# initialize a list of colors to represent each class label in
 	# the mask (starting with 'black' for the background/unlabeled
@@ -54,11 +54,10 @@ for (i, (className, color)) in enumerate(zip(CLASSES, COLORS)):
 	cv2.rectangle(legend, (100, (i * 25)), (300, (i * 25) + 25),
 		tuple(color), -1)
 
-# load our serialized model from disk
-print("[INFO] loading model...")
+print("loading model...")
 net = cv2.dnn.readNetFromTorch(args["model"])
 
-
+#for camera(webcam by default)
 if args["image"] == "camera":
 	cap = cv2.VideoCapture(0)
 	while True:
