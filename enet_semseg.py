@@ -58,49 +58,75 @@ for (i, (className, color)) in enumerate(zip(CLASSES, COLORS)):
 print("[INFO] loading model...")
 net = cv2.dnn.readNetFromTorch(args["model"])
 
-# load the input image, resize it, and construct a blob from it,
-# but keeping mind mind that the original input image dimensions
-# ENet was trained on was 1024x512
-image = cv2.imread(args["image"])
-image = imutils.resize(image, width=args["width"])
-blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (1024, 512), 0,
-	swapRB=True, crop=False)
 
-# perform a forward pass using the segmentation model
-net.setInput(blob)
-start = time.time()
-output = net.forward()
-end = time.time()
+if args["image"] == "webcam":
+	cap = cv2.VideoCapture(0)
+	while True:
+		_, image = cap.read()
+		image = imutils.resize(image, width = args["width"])
+		blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (1024, 512), 0,
+		swapRB=True, crop=False)
 
-# show the amount of time inference took
-print("[INFO] inference took {:.4f} seconds".format(end - start))
+		net.setInput(blob)
+		start = time.time()
+		output = net.forward()
+		end = time.time()
 
-# infer the total number of classes along with the spatial dimensions
-# of the mask image via the shape of the output array
-(numClasses, height, width) = output.shape[1:4]
+		print("[INFO] inference took {:.4f} seconds".format(end - start))
 
-# our output class ID map will be num_classes x height x width in
-# size, so we take the argmax to find the class label with the
-# largest probability for each and every (x, y)-coordinate in the
-# image
-classMap = np.argmax(output[0], axis=0)
+		classMap = np.argmax(output[0], axis=0)
 
-# given the class ID map, we can map each of the class IDs to its
-# corresponding color
-mask = COLORS[classMap]
+		mask = COLORS[classMap]
+		mask = cv2.resize(mask, (image.shape[1], image.shape[0]),
+		interpolation=cv2.INTER_NEAREST)
+		classMap = cv2.resize(classMap, (image.shape[1], image.shape[0]),
+		interpolation=cv2.INTER_NEAREST)
+		output = ((0.4 * image) + (0.6 * mask)).astype("uint8")
+		
+else:
+	# load the input image, resize it, and construct a blob from it,
+	# but keeping mind mind that the original input image dimensions
+	# ENet was trained on was 1024x512
+	image = cv2.imread(args["image"])
+	image = imutils.resize(image, width=args["width"])
+	blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (1024, 512), 0,
+		swapRB=True, crop=False)
 
-# resize the mask and class map such that its dimensions match the
-# original size of the input image (we're not using the class map
-# here for anything else but this is how you would resize it just in
-# case you wanted to extract specific pixels/classes)
-mask = cv2.resize(mask, (image.shape[1], image.shape[0]),
-	interpolation=cv2.INTER_NEAREST)
-classMap = cv2.resize(classMap, (image.shape[1], image.shape[0]),
-	interpolation=cv2.INTER_NEAREST)
+	# perform a forward pass using the segmentation model
+	net.setInput(blob)
+	start = time.time()
+	output = net.forward()
+	end = time.time()
 
-# perform a weighted combination of the input image with the mask to
-# form an output visualization
-output = ((0.4 * image) + (0.6 * mask)).astype("uint8")
+	# show the amount of time inference took
+	print("[INFO] inference took {:.4f} seconds".format(end - start))
+
+	# infer the total number of classes along with the spatial dimensions
+	# of the mask image via the shape of the output array
+	(numClasses, height, width) = output.shape[1:4]
+
+	# our output class ID map will be num_classes x height x width in
+	# size, so we take the argmax to find the class label with the
+	# largest probability for each and every (x, y)-coordinate in the
+	# image
+	classMap = np.argmax(output[0], axis=0)
+
+	# given the class ID map, we can map each of the class IDs to its
+	# corresponding color
+	mask = COLORS[classMap]
+
+	# resize the mask and class map such that its dimensions match the
+	# original size of the input image (we're not using the class map
+	# here for anything else but this is how you would resize it just in
+	# case you wanted to extract specific pixels/classes)
+	mask = cv2.resize(mask, (image.shape[1], image.shape[0]),
+		interpolation=cv2.INTER_NEAREST)
+	classMap = cv2.resize(classMap, (image.shape[1], image.shape[0]),
+		interpolation=cv2.INTER_NEAREST)
+
+	# perform a weighted combination of the input image with the mask to
+	# form an output visualization
+	output = ((0.4 * image) + (0.6 * mask)).astype("uint8")
 
 # show the input and output images
 cv2.imshow("Legend", legend)
