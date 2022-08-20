@@ -1,1 +1,4 @@
 .DS_Store
+/Users/adityadandwate/Desktop/Projects/Proper/sem_seg/fcn/fcn-resnet50-12-int8/
+fcn/fcn-resnet50-12-int8/
+unet/unet.h5
