@@ -51,20 +51,8 @@ def visualize_output(image, output):
 
     return confidence, result_img, blended_img, raw_labels
 
-
-
-
+print('pre test')
 preprocess = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
-
-img = Image.open('/Users/adityadandwate/Desktop/Projects/Proper/sem_seg/room3.jpg')
-img = img.resize((640 ,480), Image.ANTIALIAS)
-img.show()
-orig_tensor = np.array(img)
-img_data = preprocess(orig_tensor)
-img_data = img_data.unsqueeze(0)
-img_data = img_data.detach().cpu().numpy()
-
-print(img_data.shape)
