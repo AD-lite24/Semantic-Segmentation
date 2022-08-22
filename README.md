@@ -19,3 +19,9 @@ Tested on the COCO 2017 dataset, on still images. The model tested was quantized
 Model is heavy, but the segmentation quality is great. Works best when image resolution is around 640x480, equal to the resolution of the coco dataset. Code to fit resolution has been added. Real time performance is shaky but passable, but quality is far better than the likes of enet. 
 
 The paper can be found here https://arxiv.org/abs/1411.4038
+
+## Watershed algorithm
+A traditional approach
+
+### Report
+Compuation time is fast, but segmentation quality is poor as expected. Edge detection is not too bad, but far too much information is lost. Could work on less complicated images though
